@@ -3,52 +3,87 @@
 int n;
 int q;    
 int contadorDeFaults = 0;
-int cont;
-void remaneja(int array[], int numero) {
-    for (int i = q - 1; i > -1; i--)
-    {
-        if(i == 0) {
-            array[i] = numero;
-            return;
+int valida1, valida2, valida3;
+int pos, max;
+
+void hash(int arrayFrames[], int arrayPages[], int temp[]) {
+    for(int i = 0; i < n; i++){
+        valida1 = valida2 = 0;
+        
+        for(int j = 0; j < q; j++){
+            if(arrayFrames[j] == arrayPages[i]){
+                valida1 = valida2 = 1;
+                    break;
+            }
         }
-        array[i] = array[i-1];
+        
+        if(valida1 == 0){
+            for(int j = 0; j < q; j++){
+                if(arrayFrames[j] == -1){
+                    contadorDeFaults++;
+                    arrayFrames[j] = arrayPages[i];
+                    valida2 = 1;
+                    break;
+                }
+            }    
+        }
+        
+        if(valida2 == 0){
+         valida3 = 0;
+        
+            for(int j = 0; j < q; j++){
+                temp[j] = -1;
+            
+                for(int k = i + 1; k < n; k++){
+                    if(arrayFrames[j] == arrayPages[k]){
+                        temp[j] = k;
+                        break;
+                    }
+                }
+            }
+            
+            for(int j = 0; j < q; j++){
+                if(temp[j] == -1){
+                    pos = j;
+                    valida3 = 1;
+                    break;
+                }
+            }
+            
+            if(valida3 == 0){
+                max = temp[0];
+                pos = 0;
+            
+                for(int j = 1; j < q; j++){
+                    if(temp[j] > max){
+                        max = temp[j];
+                        pos = j;
+                    }
+                }            
+            }
+            arrayFrames[pos] = arrayPages[i];
+            contadorDeFaults++;
+        }
     }
 }
-
-void hash(int numero, int array[]) {
-    for (int i = q-1; i > -1; i--)
-    {   
-        if(numero == array[i]){
-            return;
-        }
-    }
-    contadorDeFaults++;
-    remaneja(array, numero);
-
-}
-
 
 int main()
 {
     scanf("%d", &q);
-    int numero;
     scanf("%d", &n);
-    int array[q];
-    cont = q - 1;
-
-    for (int i = 0; i < q; i++)
-    {
-        array[i] = -1;
+    int arrayFrames[q];
+    int arrayPages[n];
+    int temp[q];
+    for(int i = 0; i < n; ++i){
+        scanf("%d", &arrayPages[i]);
     }
     
-    for (int i = 0; i < n; i++)
-    {
-        scanf("%d", &numero);
-        hash(numero, array);
-        if(cont != -1){
-            cont--;
-        }
+    for(int i = 0; i < q; ++i){
+        arrayFrames[i] = -1;
     }
+
+    hash(arrayFrames, arrayPages, temp);
+    
     printf("%d\n", contadorDeFaults);
     return 0;
 }
